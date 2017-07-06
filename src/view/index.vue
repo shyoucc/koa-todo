@@ -4,7 +4,7 @@
         <h1>{{msg}}</h1>
       </div>
       <div class="addContent">
-        <el-input placeholder="请输入内容" v-model="input">
+        <el-input placeholder="请输入内容" v-model="input" @keyup.enter.native="add">
           <el-button slot="append" @click="add">添加</el-button>
         </el-input>
       </div>
@@ -35,18 +35,34 @@
 </template>
 
 <script>
+import jwtDecode from 'jwt-decode'
+
 export default {
   name: 'index',
   data () {
     return {
       msg: 'todo',
+      userinfo: {},
       input: ''
     }
   },
   methods: {
     add () {
       console.log(123)
+    },
+    getUserInfo () {
+      let token = sessionStorage.getItem('vue-koa-todo')
+      if (token && token !== null) {
+        // 解析token
+        let decode = jwtDecode(token, 'vue-koa-todo')
+        if (decode) this.userinfo = decode
+      }
+
+      console.log(this.userinfo, '个人信息')
     }
+  },
+  created () {
+    this.getUserInfo()
   }
 }
 </script>

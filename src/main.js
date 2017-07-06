@@ -6,8 +6,14 @@ import router from './router'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
+
+import Axios from 'axios'
 
 Vue.use(ElementUI)
+Vue.component(CollapseTransition.name, CollapseTransition)
+
+Vue.prototype.$http = Axios
 
 Vue.config.productionTip = false
 
