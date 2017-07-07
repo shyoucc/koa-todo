@@ -1,5 +1,8 @@
 import user from '../models/user.js'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
+
+var salt = bcrypt.genSaltSync(10);
 
 const getUserInfo = async function(ctx){
     let id = ctx.params.id
@@ -11,10 +14,11 @@ const getUserInfo = async function(ctx){
 const postUserAuth = async function(ctx){
     // 通过 koa-bodyparser 解析到body中
     let data = ctx.request.body
-    console.log(data, 'ctx.request.body')
     let userInfo = await user.getUserByName(data.name)
 
     if (userInfo !== null) {
+        // if (!bcrypt.compareSync(data.password, userInfo.password)) {
+
         if (userInfo.password !== data.password) {
             ctx.body = {
                 success: -1,
