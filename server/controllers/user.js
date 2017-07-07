@@ -16,7 +16,7 @@ const postUserAuth = async function(ctx){
 
     if (userInfo !== null) {
         if (userInfo.password !== data.password) {
-            ctx.response.body = {
+            ctx.body = {
                 success: -1,
                 info: '密码错误'
             }
@@ -30,13 +30,13 @@ const postUserAuth = async function(ctx){
             let secret = 'vue-koa-todo'
             // 签发token 并返回
             let token = jwt.sign(userToken, secret)
-            ctx.response.body = {
+            ctx.body = {
                 success: 1,
                 token: token
             }
         }
     } else {
-        ctx.response.body = {
+        ctx.body = {
             success: -1,
             info: '用户名不存在'
         }

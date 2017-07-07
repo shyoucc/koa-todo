@@ -1,11 +1,11 @@
 import db from '../config/db.js'
-import todoModel from '../schema/list.js'
+const todoModel = '../schema/list.js'
 
 const todoListDb = db.todoList
 
 const TodoList = todoListDb.import(todoModel)
 
-let getTodoListById = async function(id){
+const getTodoListById = async function(id){
     let todoList = await TodoList.findAll({
         where: {
             user_id: id
@@ -17,7 +17,7 @@ let getTodoListById = async function(id){
     return todoList
 }
 
-let createTodoList = async function(data){
+const createTodoList = async function(data){
     await TodoList.create({
         user_id: data.id,
         content: data.content,
@@ -26,7 +26,34 @@ let createTodoList = async function(data){
     return
 }
 
+const removeTodoList = async function(id, user_id){
+    await TodoList.destroy({
+        where: {
+            id,
+            user_id
+        }
+    })
+    return
+}
+
+const updateTodoList = async function(id, user_id, status){
+    await TodoList.update(
+        {
+            status
+        },
+        {
+            where: {
+                id,
+                user_id
+            }
+        }
+    )
+    return
+}
+
 export default {
     getTodoListById,
-    createTodoList
+    createTodoList,
+    removeTodoList,
+    updateTodoList
 }

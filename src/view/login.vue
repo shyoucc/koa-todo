@@ -45,8 +45,8 @@ export default {
           // 将token清空
           sessionStorage.setItem('vue-koa-todo', null)
         }
-      }, (err) => {
-        this.$message.error(err, '请求错误！')
+      }, () => {
+        this.$message.error('服务器有错误！')
         sessionStorage.setItem('vue-koa-todo', null)
       })
     }

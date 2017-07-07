@@ -18,7 +18,7 @@ const routes = [
   },
   {
     path: '*',
-    redirect: '/login'
+    redirect: '/'
   }
 ]
 
@@ -32,12 +32,13 @@ router.beforeEach((to, from, next) => {
   const token = sessionStorage.getItem('vue-koa-todo')
   if (to.path === '/') {
     if (token !== 'null' && token != null) {
+      console.log(121212)
       next('/index')
     }
     next()
   } else {
     if (token !== 'null' && token !== null) {
-      // 全局设定header的token验证，注意Bearer后有个空格
+      // 全局设定header的token验证
       Vue.prototype.$http.defaults.headers.common['Authorization'] = 'Bearer ' + token
       next()
     } else {
