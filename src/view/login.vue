@@ -6,7 +6,8 @@
       <div class="content">
           <el-input style="margin-bottom:10px" v-model="name" placeholder="请输入账号"></el-input>
           <el-input style="margin-bottom:10px" v-model="pwd" type="password" placeholder="请输入密码"></el-input>
-          <el-button type="primary" @click="login">登陆</el-button>
+          <el-button type="primary" @click="login">确定</el-button>
+          <el-button type="primary" @click="register">注册</el-button>
       </div>
   </div>
 </template>
@@ -16,13 +17,16 @@ export default {
   name: 'login',
   data () {
     return {
-      msg: ' welcome login',
+      msg: '登陆',
       input: '',
       name: '',
       pwd: ''
     }
   },
   methods: {
+    register () {
+      this.$router.push({name: 'reg'})
+    },
     login () {
       let obj = {
         name: this.name,

@@ -2,6 +2,7 @@
   <div class="index">
       <div class="title">
         <h1>{{msg}}</h1>
+        <p>{{userinfo.name}}, 回来啦，赶紧记录一下吧</p>
       </div>
       <div class="addContent">
         <el-input placeholder="请输入内容" v-model="value" @keyup.enter.native="add">

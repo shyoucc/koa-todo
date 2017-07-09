@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import index from '@/view/index'
 import login from '@/view/login'
+import reg from '@/view/reg'
 
 Vue.use(Router)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/index',
     name: 'index',
     component: index
+  },
+  {
+    path: '/reg',
+    name: 'reg',
+    component: reg
   },
   {
     path: '*',
