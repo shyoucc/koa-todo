@@ -32,6 +32,34 @@ export default {
   },
   methods: {
     register () {
+      if (!this.name || !this.pwd || !this.pwdsure) {
+        this.$message.error('表单不能为空')
+        return
+      }
+      if (this.pwd !== this.pwdsure) {
+        this.$message.error('密码不一致')
+        return
+      }
+
+      let obj = {
+        name: this.name,
+        password: this.pwd
+      }
+
+      this.$http.post('/auth/user/reg', obj).then((res) => {
+        if (res.data.success === 1) {
+          this.$message({
+            type: 'success',
+            message: '创建成功！'
+          })
+          sessionStorage.setItem('vue-koa-todo', null)
+          this.$router.push({name: 'login'})
+        } else {
+          this.$message.error(res.data.info)
+        }
+      }, () => {
+        this.$message.error('服务器有错误！')
+      })
     },
     back () {
       this.$router.go(-1)

@@ -29,7 +29,17 @@ const getUserByName = async function(name){
     return userInfo
 }
 
+const createUser = async function(data){
+    let newUser = await User.create({
+        user_name: data.name,
+        password: data.password
+    })
+
+    return newUser
+}
+
 export default {
     getUserId,
-    getUserByName
+    getUserByName,
+    createUser
 }

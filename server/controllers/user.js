@@ -1,8 +1,7 @@
 import user from '../models/user.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-
-var salt = bcrypt.genSaltSync(10);
+const saltRounds = 10
 
 const getUserInfo = async function(ctx){
     let id = ctx.params.id
@@ -17,9 +16,7 @@ const postUserAuth = async function(ctx){
     let userInfo = await user.getUserByName(data.name)
 
     if (userInfo !== null) {
-        // if (!bcrypt.compareSync(data.password, userInfo.password)) {
-
-        if (userInfo.password !== data.password) {
+        if (!bcrypt.compareSync(data.password, userInfo.password)) {
             ctx.body = {
                 success: -1,
                 info: '密码错误'
@@ -47,7 +44,30 @@ const postUserAuth = async function(ctx){
     }
 }
 
+const createUser = async function(ctx){
+    let data = ctx.request.body
+    let userInfo = await user.getUserByName(data.name)
+
+    if (userInfo && userInfo !== null) {
+        ctx.body = {
+            success: -1,
+            info: '用户名已存在'
+        }
+    } else {
+        let hash = await bcrypt.hash(data.password.trim(), saltRounds)
+        data.password = hash
+
+        let newUser = await user.createUser(data)
+
+        ctx.body = {
+            success: 1
+        }
+    }
+
+}
+
 export default {
     getUserInfo,
-    postUserAuth
+    postUserAuth,
+    createUser
 }

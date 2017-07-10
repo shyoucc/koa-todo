@@ -36,7 +36,9 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   const token = sessionStorage.getItem('vue-koa-todo')
-  if (to.path === '/') {
+  if (to.path === '/reg') {
+    next()
+  } else if (to.path === '/') {
     if (token !== 'null' && token != null) {
       console.log(121212)
       next('/index')
