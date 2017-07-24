@@ -4,6 +4,12 @@
         <h1>{{msg}}</h1>
         <p>{{userinfo.name}}, 回来啦，赶紧记录一下吧</p>
       </div>
+      <div class="upload">
+          <label class="el-button el-button--primary" for="xFile">上传文件</label>
+          <form>
+            <input type="file" id="xFile" ref="upload" style="position:absolute;clip:rect(0 0 0 0);" multiple>
+          </form>
+      </div>
       <div class="addContent">
         <el-input placeholder="请输入内容" v-model="value" @keyup.enter.native="add">
           <el-button slot="append" @click="add">添加</el-button>
@@ -43,10 +49,11 @@ export default {
   name: 'index',
   data () {
     return {
-      msg: 'todo',
+      msg: '作业本',
       userinfo: {},
       todolist: [],
-      value: ''
+      value: '',
+      up: ''
     }
   },
   methods: {
@@ -125,6 +132,12 @@ export default {
       })
     }
   },
+  mounted () {
+      let button = this.$refs.upload
+      this.up = new window.ImagePicker({
+        element: button
+      })
+  },
   created () {
     this.getUserInfo()
     this.getList()
@@ -138,6 +151,9 @@ export default {
     margin: 0 auto;
     .title {
       color: #1D8CE0;
+    }
+    .upload {
+      margin-bottom: 15px;
     }
     .list {
       margin-top: 20px;

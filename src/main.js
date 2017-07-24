@@ -9,6 +9,7 @@ import 'element-ui/lib/theme-default/index.css'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 import Axios from 'axios'
+import '@/common/upload'
 
 Vue.use(ElementUI)
 Vue.component(CollapseTransition.name, CollapseTransition)
