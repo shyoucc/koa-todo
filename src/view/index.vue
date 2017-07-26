@@ -7,7 +7,7 @@
       <div class="upload">
           <label class="el-button el-button--primary" for="xFile">上传文件</label>
           <form>
-            <input type="file" id="xFile" ref="upload" style="position:absolute;clip:rect(0 0 0 0);" multiple>
+            <input type="file" id="xFile" ref="upload" style="position:absolute;clip:rect(0 0 0 0);">
           </form>
       </div>
       <div class="addContent">
@@ -20,9 +20,24 @@
           <el-tab-pane label="要做的事">
               <transition-group name="item" tag="div">
                 <div :key="item.id" class="item" v-for="item in todolist" v-if="item.status === 0">
+                    <!-- 组件上传图片 -->
+<!--                     <el-dialog title="图片上传" size="small" :visible.sync="item.isUploadShow">
+                      <el-upload
+                        action="//up.qbox.me/"
+                        type="drag"
+                        :drag="true"
+                        :thumbnail-mode="true"
+                        :on-success="handleSuccess"
+                        :before-upload="beforeUpload"
+                        :data="form"
+                        >
+                        <i class="el-icon-upload"></i>
+                      </el-upload>
+                    </el-dialog> -->
                     <span>{{item.content}}</span>
                     <div>
                       <el-button type="success" size="mini" @click="update(item)">完成</el-button>
+                      <!-- <el-button type="warning" size="mini" @click.native="uploadshow(item)">上传图片</el-button> -->
                       <el-button type="danger" size="mini" @click="remove(item)">删除</el-button>
                     </div>
                 </div>
@@ -44,29 +59,27 @@
 
 <script>
 import jwtDecode from 'jwt-decode'
+import moment from 'moment'
 
 export default {
   name: 'index',
   data () {
     return {
-      msg: '作业本',
+      msg: 'test',
       userinfo: {},
       todolist: [],
       value: '',
-      up: ''
+      up: '',
+      bucketHost: '',
+      supportWebp: '',
+      form: {}
     }
   },
   methods: {
     update (item) {
       let status = item.status === 0 ? 1 : 0
-      console.log(status, 'status')
       this.$http.put('/api/todolist/' + this.userinfo.id + '/' + item.id + '/' + status).then((res) => {
-        console.log(res, 'update')
         if (res.data.success === 1) {
-          // this.$message({
-          //   type: 'success',
-          //   message: '更新成功'
-          // })
           this.getList()
         }
       }, () => {
@@ -75,7 +88,6 @@ export default {
     },
     remove (item) {
       this.$http.delete('/api/todolist/' + this.userinfo.id + '/' + item.id).then((res) => {
-        console.log(res)
         if (res.data.success === 1) {
           this.$message({
             type: 'success',
@@ -104,7 +116,6 @@ export default {
         } else {
           this.$message.error('添加失败')
         }
-        console.log(res, 'add')
       }, () => {
         this.$message.error('服务器有错误！')
       })
@@ -116,26 +127,61 @@ export default {
         let decode = jwtDecode(token, 'vue-koa-todo')
         if (decode) this.userinfo = decode
       }
-
-      console.log(this.userinfo, '个人信息')
     },
     getList () {
-      this.$http.get('/api/todolist/' + this.userinfo.id).then((res) => {
+       this.$http.get('/api/todolist/' + this.userinfo.id).then((res) => {
         if (res.data.success === 1) {
           this.todolist = res.data.list.reverse()
+          this.todolist.forEach((one) => {
+              this.$set(one, 'isUploadShow', false)
+          })
         } else {
           this.$message.error('获取失败')
         }
-        console.log(res, 'get')
       }, () => {
         this.$message.error('服务器有错误！')
       })
+    },
+    uploadshow (one) {
+        this.$set(one, 'isUploadShow', true)
+    },
+    // 获取七牛的token
+    beforeUpload (file) {
+      console.log(file, 'popo')
+      let curr = moment().format('YYYYMMDD').toString()
+      let prefix = moment(file.lastModified).format('HHmmss').toString()
+      let suffix = file.name
+      let key = encodeURI(`${curr}/${prefix}_${suffix}`)
+
+      return this.$http.post('/qiniu/getToken', { key }).then((res) => {
+          this.bucketHost = res.data.token.bucketHost
+          this.supportWebp = res.data.token.supportWebp
+          this.form = {
+            key,
+            token: res.data.token.upToken
+          }
+          this.up.upload(this.form)
+      })
+    },
+    handleSuccess (response, file) {
+      console.log(response, 'response')
+      console.log(file, 'file')
+      let key = response.key
+      let name = file.name
+      let prefix = this.supportWebp ? 'webp/' : ''
+      let img = `![${name}](${this.bucketHost}/${prefix}${encodeURI(key)})`
+      console.log(img, 'imgimg')
     }
   },
   mounted () {
+      let that = this
       let button = this.$refs.upload
       this.up = new window.ImagePicker({
-        element: button
+        element: button,
+        beforeUpload: that.beforeUpload,
+        url: '//up.qbox.me/',
+        successCallback: that.handleSuccess,
+        data: that.form
       })
   },
   created () {

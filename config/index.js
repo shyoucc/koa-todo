@@ -35,6 +35,10 @@ module.exports = {
         '/api':{
             target: 'http://localhost:8888',
             changeOrigin: true
+        },
+        '/qiniu':{
+            target: 'http://localhost:8888',
+            changeOrigin: true
         }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

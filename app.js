@@ -4,6 +4,8 @@ import logger from 'koa-logger'
 
 import auth from './server/routes/auth.js'
 import api from './server/routes/api.js'
+import qiniu from './server/routes/qiniu.js'
+
 import jwt from 'koa-jwt'
 import koaRouter from 'koa-router'
 
@@ -45,6 +47,7 @@ app.on('error', (err, ctx) => {
 })
 
 router.use('/auth', auth.routes())
+router.use('/qiniu', qiniu.routes())
 router.use('/api', jwt({secret: 'vue-koa-todo'}), api.routes())
 
 app.use(router.routes())
